@@ -1,0 +1,118 @@
+class Solution {
+public:
+    int knightDialer(int n) {
+        int dx[8] = {-2,2 , -2,2 , -1,1 , -1,1};
+        int dy[8] = {-1,1 ,  1,-1 , -2,2 , 2,-2};
+        int mod = 1000000007;
+        unsigned long int dp[4][3][n];
+        auto exists = [&](int r, int c){
+            if(r < 0 || r >= 4 || c < 0 || c>= 3) return 0;
+            //else if(r == 3 and c != 1) return 0;
+            else return 1;
+        };
+        memset(dp,0,sizeof(dp));
+        for(int r = 0 ; r < 3 ; r++)
+        {
+            for(int c = 0 ; c < 3; c++)
+            {
+                dp[r][c][0] = 1;
+            }
+        }
+        dp[3][0][0] = dp[3][2][0] = 0;
+        dp[3][1][0] = 1;
+        
+        //dp(r,c,steps) --> E(x,y) --> dp(x,y,steps-1)
+        unsigned long int ans = 0;  
+        for(int r = 0 ; r < 4 ; r++)
+        {
+            for(int c = 0; c < 3 ; c++)
+            {
+                for(int steps = 1 ; steps < n ; steps++)
+                {
+                    dp[r][c][steps] = 0;
+                    if(r == 3 and c!=1)
+                    {
+                        if(steps > 1)
+                            dp[r][c][steps] = dp[r][c][steps-1];
+                        continue;   
+                    }
+                    for(int index = 0 ; index < 8 ; index++)
+                    {
+                        int x = r - dx[index] , y = c - dy[index];
+                        if(exists(x,y) and dp[x][y][steps-1] > 0)
+                        {
+                            dp[r][c][steps] += dp[x][y][steps-1];
+                            cout << "r = "<<r<<" c = "<<c<<" x = "<<x<<" y = "<<y<<endl;
+                           // dp[r][c][steps] %= mod;
+                        }
+                        //
+                    }
+                }
+                ans += dp[r][c][n-1];
+               // ans %= mod;
+            }
+        }
+        return ans%mod;
+    }
+};
+/*1 2 3
+4 5 6
+7 8 9
+-1 0 -1
+
+unsigned long int ans = 0;
+func(int r ,int c,int steps)
+{
+    if(r < 0 || r >= 4 || c < 0 || c>= 4) return;
+    if(step == n)
+    {
+        ans++;
+        ans %= mod; 
+        return;
+    }
+    if(r != 3 or (c == 1))
+        step++;
+    for(int dir = 0; dir < 8 ; dir++)
+    {
+        int x = r + dx[dir] , y = c + dy[dir];
+        func(x , y , steps);
+    }
+    return;
+}
+int mod = 1000000007;
+unsigned long int dp[n][4][3];
+for(int r = 0 ; r < 3 ; r++)
+{
+    for(int c = 0 ; c < 3; c++)
+    {
+        dp[r][c][0] = 1;
+    }
+}
+dp[3][0][0] = dp[3][2][0] = 0;
+dp[3][1][0] = 1;
+memset(dp,0,sizeof(dp));
+//dp(r,c,steps) --> E(x,y) --> dp(x,y,steps-1)
+unsigned long int ans = 0;  
+for(int r = 0 ; r < 4 ; r++)
+{
+    for(int c = 0; c < 3 ; c++)
+    {
+        for(int step = 1 ; step < n ; steps)
+        {
+            dp[r][c][steps] = 0;
+            for(int index = 0 ; index < 8 ; index++)
+            {
+                int x = r - dx[dir] , y = c - dy[dir];
+                if(exists(x,y) and dp[x][y][steps-1] > 0)
+                {
+                    dp[r][c][steps] += dp[x][y][steps-1];
+                    dp[r][c][steps] %= mod;
+                }
+            }
+        }
+        ans += dp[r][c][n-1];
+        ans %= mod;
+    }
+}
+return ans;
+*/
